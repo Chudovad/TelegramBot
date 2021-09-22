@@ -155,7 +155,7 @@ namespace TelegramBot
                     await client.SendTextMessageAsync(msg.Chat.Id,
                         "Привет");
                     await client.SendAudioAsync(msg.Chat.Id,
-                        "https://github.com/TelegramBots/book/raw/master/src/docs/audio-guitar.mp3");
+                        "https://github.com/Chudovad/TelegramBot/blob/master/TelegramBot/files/audio_hello.mp3");
                 }
                 else if (msg.Text[0] == '/')
                 {
