@@ -11,7 +11,7 @@ namespace TelegramBot
 {
     class Program
     {
-        private static string token { get; set; } = "1958315623:AAGsu388tRZq3KI_hYACTm1NBjte1Hgg7wE";
+        private static string token { get; } = BotToken.token;
         private static TelegramBotClient client;
         private static ExchangeRates ex;
         private static Activity activity;
