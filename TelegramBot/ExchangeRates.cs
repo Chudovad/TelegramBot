@@ -1,5 +1,8 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Net;
 using System.Text;
 
 
@@ -9,7 +12,7 @@ namespace TelegramBot
     {
         public string PrintSend(String msg)
         {
-            string print = "Курс рубля: " + ExchangeRate() +
+            string print = "Курс рубля: " + ExchangeRateFromAPI() +
                     "\r\nМои БО: " + msg +
                     "\r\nМои БО в RUB: " + Math.Round(ConvertBOtoRUB(msg), 2)  +
                     "\r\nRUB в BYN: " + Math.Round(ConvertRUBtoBYN(msg), 2) +
@@ -26,6 +29,24 @@ namespace TelegramBot
             String RateString = System.Text.RegularExpressions.Regex.Match(Response, @"<td class=""rur"">([0-9]+\.[0-9]+)</td>").Groups[1].Value.Replace(".", ",");
             return Convert.ToDouble(RateString);
         }
+
+        private static double ExchangeRateFromAPI()
+        {
+            string url = "https://www.nbrb.by/api/exrates/rates/rub?parammode=2";
+
+            HttpWebRequest httpWebRequest = (HttpWebRequest)WebRequest.Create(url);
+            HttpWebResponse httpWebResponse = (HttpWebResponse)httpWebRequest.GetResponse();
+
+            string respons;
+
+            using (StreamReader streamReader = new StreamReader(httpWebResponse.GetResponseStream()))
+            {
+                respons = streamReader.ReadToEnd();
+            }
+            RateShort rateShort = JsonConvert.DeserializeObject<RateShort>(respons);
+            return Convert.ToDouble(rateShort.Cur_OfficialRate);
+        }
+
         private static double ConvertBOtoRUB(String msg)
         {
             String textBo = msg;
@@ -35,7 +56,7 @@ namespace TelegramBot
         }
         private static double ConvertRUBtoBYN(String msg)
         {
-            double byn = ConvertBOtoRUB(msg) * ExchangeRate() / 100;
+            double byn = ConvertBOtoRUB(msg) * ExchangeRateFromAPI() / 100;
             return byn;
         }
 
